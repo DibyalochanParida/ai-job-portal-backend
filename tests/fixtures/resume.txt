@@ -1,0 +1,22 @@
+Casey Fictional
+Senior Frontend Engineer
+Portland, OR
+linkedin.com/in/example-profile
+
+Summary
+Frontend engineer with 7 years of experience building React and TypeScript applications used by 500k users. I care about performance, accessibility and developer experience.
+
+Experience
+Senior Frontend Engineer at Example Widgets (2021 - present)
+- Led the migration of a legacy app to React and TypeScript, reducing bundle size by 40%
+- Built a GraphQL data layer that cut page load time by 35%
+- Mentored 4 engineers and introduced Jest and Playwright testing, raising coverage to 85%
+Frontend Developer at Sample Media (2018 - 2021)
+- Developed a component library in React used by 6 product teams
+- Improved conversion by 12% through A/B tested checkout redesigns
+
+Education
+State University, B.S. in Computer Science, 2017
+
+Skills
+JavaScript, TypeScript, React, Redux, GraphQL, HTML, CSS, Jest, Playwright, Node.js, Figma, Webpack
