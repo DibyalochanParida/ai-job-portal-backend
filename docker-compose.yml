@@ -1,0 +1,60 @@
+# Local full stack: PostgreSQL + pgvector, the API, and (optionally) the React frontend.
+#
+#   cp .env.example .env              # then set JWT_SECRET (and optionally API keys)
+#   docker compose up --build         # db + api on http://localhost:4000
+#   docker compose --profile web up --build   # also serves the frontend on http://localhost:8080
+#   docker compose exec api node dist/db/seed.js   # load demo data
+#
+# The web profile expects the frontend repo checked out next to this one
+# (../ai-job-portal-frontend); override with FRONTEND_DIR.
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: jobportal
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jobportal}
+      POSTGRES_DB: jobportal
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobportal -d jobportal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://jobportal:${POSTGRES_PASSWORD:-jobportal}@db:5432/jobportal
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET (32+ chars) in .env}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8080,http://localhost:5173}
+      STORAGE_DRIVER: ${STORAGE_DRIVER:-local}
+    ports:
+      - "4000:4000"
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    profiles: ["web"]
+    build:
+      context: ${FRONTEND_DIR:-../ai-job-portal-frontend}
+    environment:
+      API_UPSTREAM: http://api:4000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  uploads:
